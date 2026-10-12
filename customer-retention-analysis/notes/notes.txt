@@ -1,0 +1,125 @@
+projet name: customer retention analysis
+
+
+Business Problem:"Hamare bahut se customers ek baar khareed ke wapas nahi aate. Kaun se customers jaa rahe hain, aur unhe wapas kaise layein?"
+
+Ye problem kyu important hai
+Naya customer laane me paisa lagta hai (ads, discount). Purane customer ko wapas laana 5x sasta padta hai.
+Aksar 20% customers 80% revenue laate hain. Agar wo chale gaye, to company ko bada nuksaan hota hai.
+Company ko pata hi nahi hota kaun customer jaane wala hai, isliye wo sabko same offer bhejti hai (paisa waste).
+
+
+ower task : 
+konsa customer best hai?
+konsa cutomer chodhnewala hai?
+kis group ko kya provide karnahai (discunt,offer)
+
+
+customer.csv : 
+shape : (3600, 4)
+
+
+
+
+
+orders.csv :(9245, 7) 
+discount_code   1411 non-null   object
+order_date      9245 non-null   object 
+
+
+order_items: (15608, 5)
+ 3   unit_price       15409 non-null  float64
+"unit_price me 199 nulls the (~1.3%). Unhe product-wise mode se bhara. Data me list_price se 0-5% ka fark dikha, isliye bhari hui values me max 5% ka error possible hai, jo overall revenue par negligible hai."
+
+
+1. Duplicates drop kiye: ye ~38 rows ka hisaab bhi samjha deta hai. README me ek line likh do: "X duplicate orders hataye." Ek check: orders_df['order_id'].is_unique chalao. True aana chahiye, tabhi aage ke joins me rows duplicate nahi hongi.
+
+2. Discount line-level hai: to aapka formula quantity x unit_price - discount_amount bilkul sahi hai, kisi badlaav ki zarurat nahi.
+
+Point 3: Cancelled aur returned
+
+Ye aapne khaali chhoda hai, aur ye faisla zaroori hai, kyunki isi par Monetary, Frequency aur repeat rate ke numbers tike hain. Mera sujhav ye hai, aap chaho to badal sakte ho:
+
+Status	Revenue / Monetary me	Frequency / Repeat rate me
+completed	Haan	Haan
+canceled	Nahi	Nahi, kyunki khareed hui hi nahi
+returned	Nahi, kyunki paisa wapas gaya	Nahi
+
+Is tareeke me RFM sirf asli, tikkne wali khareedari par banta hai. Returns ko alag analysis me rakho (kis category ya channel me zyada returns aate hain), jo ek bonus insight ho sakta hai.
+
+Is faisle ka ek nateeja hai: jin customers ke saare orders cancel ya return hue, unke paas koi completed order nahi hoga, to wo RFM se bahar ho jaayenge. Unhe alag count karke README me likh dena.
+
+
+
+Total revenue 1,882,076.88:
+"Top 20% customers 62% revenue laate hain, isliye in customers ko khona sabse mehnga padega."
+
+
+
+10% = 44%, 20% = 62%, 80% revenue = 36%
+
+Total revenue (completed)	1,882,076.88
+Top 10% / 20% / 50% customers ka share	44% / 62% / 89%
+80% revenue laane wale customers	36%
+Repeat rate (khareedaron me)	64%
+Repeat customers ka revenue share	92.2%
+One-time customers ka revenue share	7.8%
+Signup ke baad kabhi nahi khareeda	43.1% (1553 customers)
+
+
+
+
+
+
+
+Phase 4: RFM segmentation 
+
+RFM ke teen hisse hain: Recency (kitne din pehle aakhri khareed), Frequency (kitni baar), Monetary (kitna paisa).
+
+
+
+
+
+
+
+count	2047.000000	2047.000000	2047.000000
+mean	196.222277	4.130923	919.431793
+std	183.420048	6.185109	1451.287375
+min	1.000000	1.000000	6.390000
+25%	37.000000	1.000000	180.970000
+50%	136.000000	2.000000	489.250000
+75%	315.500000	4.000000	1095.585000
+max	723.000000	75.000000	18775.230000
+
+
+```
+r_score
+4    514
+3    512
+1    512
+2    509
+
+```
+
+
+
+```
+m_score
+1    513
+4    512
+2    511
+3    511
+
+```
+
+
+
+```
+f_score
+1    512
+2    512
+4    512
+3    511
+```
+
+f_score me error aya mene rank(method='first') use kiya
